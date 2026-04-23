@@ -1,0 +1,205 @@
+April Report Prompt Checklist – April 2026 TAT Dashboard
+==========================================================
+
+────────────────────────────────────────────────────────
+SECTION A: ALL TOKENS (Overview / First Page)
+────────────────────────────────────────────────────────
+
+1) All Tokens – Overview Section
+   Source dataset : TAT - ALL TOKENS.xlsx  (all statuses, April 2026 only)
+
+   Prompt:
+   Using the "All Tokens" dataset for April 2026, generate a summary including:
+   - Total tokens taken
+   - Status breakdown (Complete, E-Complete, Pending, etc.)
+   - Percentage distribution per status
+   Present the insights in a concise, dashboard-friendly format.
+
+──────────────────────────────────────────────────────
+
+2) Status Mix Analysis
+   (Feeds the donut/pie chart)
+
+   Prompt:
+   Analyze the status mix for April 2026. Calculate the percentage share of each
+   token status and highlight any notable imbalance (e.g., high pending or low
+   completion rate).
+
+──────────────────────────────────────────────────────
+
+3) Modality Distribution (All Tokens)
+   (MRI, CT, X-ray, Ultrasound)
+
+   Prompt:
+   From the All Tokens dataset, provide a modality breakdown showing:
+   - Total tokens per modality
+   - Percentage contribution of each modality
+   Highlight which modality had the highest workload.
+
+──────────────────────────────────────────────────────
+
+4) Daily Trend (All Tokens)
+   (Matches the trend/bar chart)
+
+   Prompt:
+   Analyze the daily token volume for April 2026. Identify:
+   - Peak days
+   - Lowest activity days
+   - Any unusual spikes or drops
+   Keep insights short and data-driven.
+
+────────────────────────────────────────────────────────
+SECTION B: COMPLETED TOKENS – TAT ANALYSIS
+────────────────────────────────────────────────────────
+   Source dataset : TAT - ALL COMPLETED TOKENS.xlsx
+   Filter rule   : Status = Complete OR E-Complete, April 2026 only
+   Exclude rule  : Rows where all TAT stages (Dispatch + Billing + Service) = 0
+
+──────────────────────────────────────────────────────
+
+5) Completed Tokens Summary
+   (Main TAT section / scorecard)
+
+   Prompt:
+   Using the Completed Tokens dataset for April 2026 (Status: Complete,
+   E-Complete only), generate:
+   - Total completed tokens
+   - Average TAT
+   - Minimum and maximum TAT
+   Keep it concise for dashboard display.
+
+──────────────────────────────────────────────────────
+
+6) TAT Distribution (Core Performance)
+   (Donut chart – Dispatch / Billing / Service)
+
+   Prompt:
+   Generate TAT distribution analysis using:
+   - Dispatch time
+   - Billing time
+   - Service time
+   Exclude rows where all stages sum to 0.
+   Provide percentage contribution of each stage and key observations.
+
+   Chart color standards:
+   - Dispatch : #1f77b4 (blue)
+   - Billing  : #d62728 (red)
+   - Service  : #2ca02c (green)
+
+──────────────────────────────────────────────────────
+
+7) Modality Performance (TAT)
+   (Real performance insights by modality)
+
+   Prompt:
+   Analyze TAT performance by modality (MRI, CT, X-ray, Ultrasound):
+   - Average TAT per modality
+   - Fastest vs slowest modality
+   - Key delays or inefficiencies
+   Present as short bullet insights.
+
+──────────────────────────────────────────────────────
+
+8) MRI & Ultrasound Service Breakdown
+   (Specific service-stage donuts)
+
+   Prompt:
+   For MRI and Ultrasound, break down TAT into:
+   - Wait time
+   - Service time
+   - Hold time
+   Highlight which stage contributes most to delays.
+
+   Chart color standards (Wait/Service/Hold):
+   - Wait    : #6A5ACD
+   - Service : #E91E63
+   - Hold    : #4FC3F7
+
+──────────────────────────────────────────────────────
+
+9) TAT Daily Trend
+   (Performance over time)
+
+   Prompt:
+   Analyze daily average TAT for April 2026. Identify:
+   - Days with highest delays
+   - Days with best performance
+   - Any patterns or inconsistencies
+
+──────────────────────────────────────────────────────
+
+10) Narrative Insights
+    (Bullet-point section on the dashboard)
+
+    Prompt:
+    Generate concise narrative insights for April 2026 covering:
+    - Overall performance
+    - Modality-specific observations (MRI, CT, X-ray, Ultrasound)
+    - Key operational challenges
+    Keep the tone professional and dashboard-ready.
+
+──────────────────────────────────────────────────────
+
+11) Executive Summary
+    (Top section of the report – management-facing)
+
+    Prompt:
+    Create a high-level executive summary for April 2026 including:
+    - Total workload (All Tokens)
+    - Completion performance
+    - TAT performance highlights
+    - Key issues and improvements
+    Keep it brief and suitable for management.
+
+────────────────────────────────────────────────────────
+SECTION C: VALIDATION (CRITICAL – Run Last)
+────────────────────────────────────────────────────────
+
+12) Final Validation Prompt
+
+    Prompt:
+    Validate the April report using the following rules:
+    - All Tokens includes ALL statuses
+    - Completed Tokens includes only Complete & E-Complete
+    - Data is filtered strictly to April 2026
+    - No zero-TAT records included in analysis
+    - Confirm consistency across all metrics.
+
+────────────────────────────────────────────────────────
+DATA INPUTS CHECKLIST
+────────────────────────────────────────────────────────
+
+   [ ] TAT - ALL TOKENS.xlsx            (all statuses)
+   [ ] TAT - ALL COMPLETED TOKENS.xlsx  (Complete & E-Complete only)
+   [ ] monthly_token_scorecard.csv
+   [ ] modality_summary.csv
+   [ ] modality_token_status.csv
+   [ ] modality_token_status_detail.csv
+   [ ] status_mix.csv
+   [ ] daily_trend.csv
+   [ ] summary.txt
+
+────────────────────────────────────────────────────────
+WORKFLOW STEPS
+────────────────────────────────────────────────────────
+
+   1. Upload April Excel files and export CSVs.
+   2. Run prompts 1–4  → populate All Tokens section.
+   3. Run prompts 5–9  → populate Completed Tokens / TAT section.
+   4. Run prompt 10    → write narrative bullets.
+   5. Run prompt 11    → write executive summary.
+   6. Run prompt 12    → validate all figures before publishing.
+   7. Run build script → generate index.html.
+   8. Verify on desktop and mobile (scorecards, chart labels, HH:MM format).
+   9. Commit and push to GitHub Pages.
+
+────────────────────────────────────────────────────────
+CHART & FORMAT STANDARDS (carry over from Jan/Feb/Mar)
+────────────────────────────────────────────────────────
+
+   - Convert all time labels to HH:MM format.
+   - Trend charts: bar labels only (no line labels); add headroom to avoid clipping.
+   - Legends positioned above charts.
+   - Mobile scorecards: 2-column layout on small screens.
+   - Plotly responsive with resize handler.
+   - Filter: April 2026 dates only (no bleed from March or May).
