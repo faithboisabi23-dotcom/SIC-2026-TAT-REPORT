@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TAT &amp; Token Workflow Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --blue-dark: #0b3d91;
+            --blue-mid: #0a52c7;
+            --blue-light: #e8f0fe;
+            --green: #1a9850;
+            --red: #d73027;
+            --amber: #f4a100;
+            --slate: #2c3e50;
+            --gray-100: #f5f7fa;
+            --gray-200: #e8ecf1;
+            --gray-500: #718096;
+            --gray-700: #4a5568;
+            --gray-900: #1a202c;
+            --card-shadow: 0 2px 12px rgba(0, 0, 0, .07), 0 1px 3px rgba(0, 0, 0, .04);
+            --card-hover: 0 8px 28px rgba(0, 0, 0, .13);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --font: 'DM Sans', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--gray-100);
+            color: var(--slate);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+            color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: 0 4px 16px rgba(11, 61, 145, .35);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        header img {
+            height: 40px;
+            flex-shrink: 0;
+            background: #fff;
+            border-radius: 7px;
+            padding: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+        }
+
+        header h1 {
+            font-size: clamp(14px, 2.2vw, 20px);
+            font-weight: 600;
+            letter-spacing: -.3px;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .header-controls label {
+            font-weight: 600;
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        .ctrl {
+            border: 1px solid rgba(255, 255, 255, .5);
+            background: rgba(255, 255, 255, .15);
+            color: #fff;
+            border-radius: var(--radius-sm);
+            padding: 5px 9px;
+            font-size: 12px;
+            font-family: var(--font);
+            min-height: 30px;
+            outline: none;
+        }
+
+        .ctrl:focus {
+            border-color: rgba(255, 255, 255, .9);
+        }
+
+        #monthSelector option {
+            color: var(--gray-900);
+            background: #fff;
+        }
+
+        .btn {
+            border: 1px solid rgba(255, 255, 255, .5);
+            background: rgba(255, 255, 255, .18);
+            color: #fff;
+            border-radius: var(--radius-sm);
+            padding: 5px 11px;
+            min-height: 30px;
+            font-size: 12px;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: background .15s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, .3);
+        }
+
+        /* ── Page layout ── */
+        .container {
+            padding: 24px 20px 60px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 0, 0, .045);
+            transition: box-shadow .25s, transform .25s;
+        }
+
+        .card:hover {
+            box-shadow: var(--card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Modality accent border */
+        .modality-card {
+            border-left: 5px solid var(--accent);
+        }
+
+        .mod-xray {
+            --accent: #0b3d91;
+        }
+
+        .mod-mri {
+            --accent: #7b2d8b;
+        }
+
+        .mod-ct {
+            --accent: #0d7377;
+        }
+
+        .mod-us {
+            --accent: #c05621;
+        }
+
+        /* ── Section titles ── */
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .modality-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .modality-header h2 {
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .mod-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 20px;
+            color: #fff;
+            background: var(--accent);
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        /* ── Insight box ── */
+        .insight-box {
+            background: var(--blue-light);
+            border-left: 4px solid var(--accent, var(--blue-mid));
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            padding: 11px 15px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: var(--gray-700);
+            line-height: 1.7;
+        }
+
+        .insight-box strong {
+            color: var(--gray-900);
+        }
+
+        /* ── Grids ── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        /* Modality layout: trend top, then 3-col bottom */
+        .mod-top {
+            margin-bottom: 16px;
+        }
+
+        .mod-bottom {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* ── Chart sub-labels ── */
+        .chart-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-bottom: 4px;
+        }
+
+        /* Each mod-bottom column is a flex column so chart+table stay bottom-aligned */
+        .mod-bottom>div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mod-bottom>div .mini-table {
+            margin-top: auto;
+            padding-top: 8px;
+        }
+
+        /* ── Mini tables ── */
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11.5px;
+            margin-top: 8px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .mini-table th {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            padding: 6px 9px;
+            font-weight: 600;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: .5px;
+            text-align: left;
+        }
+
+        .mini-table td {
+            border: 1px solid var(--gray-200);
+            padding: 6px 9px;
+            color: var(--gray-700);
+        }
+
+        .mini-table tbody tr:nth-child(even) {
+            background: var(--gray-100);
+        }
+
+        .mini-table tbody tr:hover {
+            background: var(--blue-light);
+        }
+
+        /* ── Scorecard grid ── */
+        .scorecard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .sc-item {
+            background: var(--gray-100);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border: 1px solid var(--gray-200);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .sc-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .sc-item .sc-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--gray-500);
+        }
+
+        .sc-item .sc-value {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 900px) {
+            .scorecard-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .sc-item .sc-value {
+                font-size: 26px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .scorecard-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .sc-item {
+                padding: 12px 14px;
+            }
+
+            .sc-item .sc-value {
+                font-size: 28px;
+            }
+        }
+
+        /* ── Loading overlay ── */
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            z-index: 9999;
+            font-size: 15px;
+            font-family: var(--font);
+            transition: opacity .4s;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(255, 255, 255, .25);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .75s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1100px) {
+            .mod-bottom {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 16px;
+            }
+
+            header h1 {
+                font-size: 15px;
+                white-space: normal;
+            }
+
+            .header-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .container {
+                padding: 14px 12px 48px;
+            }
+
+            .card {
+                padding: 14px 14px;
+                margin-bottom: 14px;
+                border-radius: 10px;
+            }
+
+            .mod-bottom {
+                grid-template-columns: 1fr;
+            }
+
+            .modality-header h2 {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-left {
+                width: 100%;
+            }
+
+            .ctrl,
+            .btn {
+                min-height: 34px;
+                font-size: 13px;
+            }
+
+            .card {
+                border-radius: 8px;
+                padding: 12px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading">
+        <div class="spinner"></div>
+        <span>Loading dashboard data…</span>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'" />
+            <h1 id="dashboardTitle">TAT &amp; Token Workflow Report</h1>
+        </div>
+        <div class="header-controls">
+            <label for="monthSelector">Month:</label>
+            <select id="monthSelector" class="ctrl"></select>
+            <label>From:</label>
+            <input type="date" id="startDate" class="ctrl" />
+            <label>To:</label>
+            <input type="date" id="endDate" class="ctrl" />
+            <button id="applyDateFilter" class="btn">Apply</button>
+            <button id="clearDateFilter" class="btn">Clear</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- ── Monthly Summary ── -->
+        <div class="card">
+            <div class="section-title">Monthly Summary</div>
+            <p id="scorecards-summary" style="font-size:13px;color:var(--gray-700);margin-bottom:16px;"></p>
+            <div id="scorecards" class="scorecard-grid"></div>
+        </div>
+
+        <!-- ── Overview charts ── -->
+        <div class="grid-2">
+            <div class="card">
+                <div class="section-title">Modality Status Overview</div>
+                <div id="modality_status"></div>
+            </div>
+            <div class="card">
+                <div class="section-title">TAT vs Target by Modality</div>
+                <div id="tat_vs_target"></div>
+            </div>
+        </div>
+
+        <!-- ── Per-modality cards (built by JS) ── -->
+        <div id="modality-cards"></div>
+
+    </div>
+
+    <script>
+        /* ==========================================================
+           CONFIG
+        ========================================================== */
+        var DATA_BASE = 'data/';
+
+        var MODALITIES = [
+            { key: 'XR', label: 'XRAY', cls: 'mod-xray', color: '#0b3d91' },
+            { key: 'MR', label: 'MRI', cls: 'mod-mri', color: '#7b2d8b' },
+            { key: 'CT', label: 'CT', cls: 'mod-ct', color: '#0d7377' },
+            { key: 'US', label: 'Ultrasound', cls: 'mod-us', color: '#c05621' },
+        ];
+
+        var KEY_TO_LABEL = { XR: 'XRAY', MR: 'MRI', CT: 'CT', US: 'Ultrasound' };
+
+        var DB = {};
+        var currentMonthKey = null;
+        var currentDateFilter = { start: null, end: null };
+
+        /* ==========================================================
+           FETCH
+        ========================================================== */
+        function fetchJSON(file) {
+            return fetch(DATA_BASE + file).then(function (r) {
+                if (!r.ok) throw new Error('Cannot load ' + file + ' (' + r.status + ')');
+                return r.json();
+            });
+        }
+
+        Promise.all([
+            fetchJSON('scorecards.json'),
+            fetchJSON('modality_status.json'),
+            fetchJSON('tat_vs_target.json'),
+            fetchJSON('tat_distribution.json'),
+            fetchJSON('daily_trends.json'),
+            fetchJSON('daily_status_summary.json'),
+            fetchJSON('daily_process_breakdown.json'),
+        ]).then(function (res) {
+            DB.scorecards = res[0];
+            DB.modalityStatus = res[1];
+            DB.tatVsTarget = res[2];
+            DB.tatDist = res[3];
+            DB.dailyTrends = res[4];
+            DB.dailyStatus = res[5];
+            DB.processBD = res[6];
+            initDashboard();
+            var ov = document.getElementById('loading');
+            ov.style.opacity = '0';
+            setTimeout(function () { ov.style.display = 'none'; }, 400);
+        }).catch(function (err) {
+            document.getElementById('loading').innerHTML =
+                '<div style="max-width:460px;text-align:center;padding:24px;font-family:sans-serif;">' +
+                '<strong style="font-size:17px;">Failed to load data</strong><br><br>' + err.message +
+                '<br><br>Make sure JSON files exist in <code>dashboard/data/</code> and you are viewing this via GitHub Pages or a local server.</div>';
+        });
+
+        /* ==========================================================
+           HELPERS
+        ========================================================== */
+        function monthData(dataset, key) {
+            return (dataset.months || []).find(function (m) { return m.key === key; }) || null;
+        }
+
+        function filterByDate(points) {
+            if (!currentDateFilter.start && !currentDateFilter.end) return points || [];
+            return (points || []).filter(function (p) {
+                if (currentDateFilter.start && p.date < currentDateFilter.start) return false;
+                if (currentDateFilter.end && p.date > currentDateFilter.end) return false;
+                return true;
+            });
+        }
+
+        function toHHMM(v) {
+            if (v == null || isNaN(v)) return '--';
+            var h = Math.floor(v / 60), m = Math.round(v % 60);
+            return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+        }
+
+        function safeAvg(arr) {
+            var vals = (arr || []).filter(function (v) { return v != null && !isNaN(v); });
+            return vals.length ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length : 0;
+        }
+
+        function safePct(v, total) {
+            return total ? (v / total * 100).toFixed(1) + '%' : '--';
+        }
+
+        /* yPadded: returns a yaxis range [0, max*factor] to prevent outside labels clipping */
+        function yPadded(arrays, factor) {
+            factor = factor || 1.18;
+            var max = 0;
+            arrays.forEach(function (arr) {
+                arr.forEach(function (v) { if (v != null && !isNaN(v) && v > max) max = v; });
+            });
+            return [0, max * factor];
+        }
+
+        var BASE_LAYOUT = {
+            paper_bgcolor: 'transparent',
+            plot_bgcolor: 'transparent',
+            font: { family: "'DM Sans', sans-serif", size: 11, color: '#4a5568' },
+        };
+
+        var PLOT_CFG = { displayModeBar: false, responsive: true };
+
+        function layout(overrides) {
+            var base = JSON.parse(JSON.stringify(BASE_LAYOUT));
+            Object.keys(overrides).forEach(function (k) { base[k] = overrides[k]; });
+            return base;
+        }
+
+        /* ==========================================================
+           INSIGHT GENERATOR
+        ========================================================== */
+        function generateInsight(modKey, monthKey) {
+            var dt = monthData(DB.dailyTrends, monthKey);
+            var td = monthData(DB.tatDist, monthKey);
+            var tv = monthData(DB.tatVsTarget, monthKey);
+            var pb = monthData(DB.processBD, monthKey);
+            var parts = [];
+
+            // 1. Trend: % days above target + peak/best day
+            if (dt && dt.modalities && dt.modalities[modKey]) {
+                var pts = filterByDate(dt.modalities[modKey]);
+                if (pts.length) {
+                    var withData = pts.filter(function (p) { return p.actualMin != null && p.targetMin != null; });
+                    var above = withData.filter(function (p) { return p.actualMin > p.targetMin; }).length;
+                    var pctAbove = withData.length ? Math.round(above / withData.length * 100) : 0;
+                    var peak = pts.reduce(function (a, b) { return (b.actualMin || 0) > (a.actualMin || 0) ? b : a; }, pts[0]);
+                    var best = pts.reduce(function (a, b) { return (b.actualMin != null && (a.actualMin == null || b.actualMin < a.actualMin)) ? b : a; }, pts[0]);
+
+                    if (pctAbove === 0) {
+                        parts.push('TAT remained <strong>within target on all active days</strong> this period.');
+                    } else if (pctAbove >= 75) {
+                        parts.push('TAT exceeded the target on <strong>' + pctAbove + '% of days</strong> (' + above + ' of ' + withData.length + '), indicating persistent delays.');
+                    } else {
+                        parts.push('TAT exceeded target on <strong>' + pctAbove + '% of days</strong> (' + above + ' of ' + withData.length + ' active days).');
+                    }
+                    if (peak && peak.actualHHMM && peak.date) {
+                        parts.push('Peak TAT was <strong>' + peak.actualHHMM + '</strong> on ' + peak.date + '.');
+                    }
+                    if (best && best.actualHHMM && best.date && best.date !== (peak && peak.date)) {
+                        parts.push('Best TAT was <strong>' + best.actualHHMM + '</strong> on ' + best.date + '.');
+                    }
+                }
+            }
+
+            // 2. Distribution: dominant stage
+            if (td && td.modalities) {
+                var mDist = td.modalities.find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+                if (mDist) {
+                    var stages = [
+                        { name: 'billing', p: mDist.billingPct, t: mDist.billingHHMM },
+                        { name: 'service', p: mDist.servicePct, t: mDist.serviceHHMM },
+                        { name: 'dispatch', p: mDist.dispatchPct, t: mDist.dispatchHHMM },
+                    ].filter(function (s) { return s.p != null; });
+                    if (stages.length) {
+                        var dom = stages.reduce(function (a, b) { return (b.p || 0) > (a.p || 0) ? b : a; }, stages[0]);
+                        parts.push('The <strong>' + dom.name + '</strong> stage is the largest contributor to TAT (' + dom.p + '%, avg ' + dom.t + ').');
+                    }
+                }
+            }
+
+            // 3. Token volume
+            if (tv && tv.modalities) {
+                var mTV = tv.modalities.find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+                if (mTV && mTV.tokenCount) {
+                    parts.push('<strong>' + mTV.tokenCount + ' completed tokens</strong> were processed this period.');
+                }
+            }
+
+            // 4. Service bottleneck (largest wait/service/hold)
+            if (pb && pb.modalities) {
+                var mPB = pb.modalities.find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+                if (mPB && mPB.points && mPB.points.length) {
+                    var avgW = safeAvg(mPB.points.map(function (p) { return p.serviceBreakdown.waitMinutes; }));
+                    var avgS = safeAvg(mPB.points.map(function (p) { return p.serviceBreakdown.serviceMinutes; }));
+                    var avgH = safeAvg(mPB.points.map(function (p) { return p.serviceBreakdown.holdMinutes; }));
+                    var top = [
+                        { name: 'wait', val: avgW },
+                        { name: 'service', val: avgS },
+                        { name: 'hold', val: avgH },
+                    ].reduce(function (a, b) { return b.val > a.val ? b : a; });
+                    if (top.val > 0) {
+                        parts.push('Within the service stage, <strong>' + top.name + ' time</strong> is the biggest component (avg ' + toHHMM(top.val) + ').');
+                    }
+                }
+            }
+
+            return parts.length
+                ? parts.join(' ')
+                : 'No data available for the selected period.';
+        }
+
+        /* ==========================================================
+           BUILD MODALITY CARDS (DOM, once)
+        ========================================================== */
+        function buildModalityCards() {
+            var container = document.getElementById('modality-cards');
+            MODALITIES.forEach(function (mod) {
+                var card = document.createElement('div');
+                card.className = 'card modality-card ' + mod.cls;
+                card.id = 'card-' + mod.key;
+                card.innerHTML =
+                    '<div class="modality-header">' +
+                    '<h2>' + mod.label + '</h2>' +
+                    '<span class="mod-badge">' + mod.key + '</span>' +
+                    '</div>' +
+                    '<div class="insight-box" id="insight-' + mod.key + '">Loading…</div>' +
+
+                    /* Trend — full width */
+                    '<div class="mod-top">' +
+                    '<div class="chart-label">Daily TAT Trend — Actual vs Target</div>' +
+                    '<div id="trend-' + mod.key + '"></div>' +
+                    '</div>' +
+
+                    /* Distribution | Service | Billing — 3 columns */
+                    '<div class="mod-bottom">' +
+                    '<div>' +
+                    '<div class="chart-label">TAT Distribution by Process</div>' +
+                    '<div id="dist-' + mod.key + '"></div>' +
+                    '<table class="mini-table" id="dist-tbl-' + mod.key + '">' +
+                    '<thead><tr><th>Process</th><th>Avg</th><th>Share</th></tr></thead>' +
+                    '<tbody></tbody>' +
+                    '</table>' +
+                    '</div>' +
+                    '<div>' +
+                    '<div class="chart-label">Service Stage Breakdown</div>' +
+                    '<div id="svc-' + mod.key + '"></div>' +
+                    '<table class="mini-table" id="svc-tbl-' + mod.key + '">' +
+                    '<thead><tr><th>Stage</th><th>Avg</th><th>Share</th></tr></thead>' +
+                    '<tbody></tbody>' +
+                    '</table>' +
+                    '</div>' +
+                    '<div>' +
+                    '<div class="chart-label">Billing Stage Breakdown</div>' +
+                    '<div id="bill-' + mod.key + '"></div>' +
+                    '<table class="mini-table" id="bill-tbl-' + mod.key + '">' +
+                    '<thead><tr><th>Stage</th><th>Avg</th><th>Share</th></tr></thead>' +
+                    '<tbody></tbody>' +
+                    '</table>' +
+                    '</div>' +
+                    '</div>';
+
+                container.appendChild(card);
+
+                /* Init empty Plotly containers */
+                ['trend-', 'dist-', 'svc-', 'bill-'].forEach(function (pfx) {
+                    Plotly.newPlot(pfx + mod.key, [], {}, PLOT_CFG);
+                });
+            });
+        }
+
+        /* ==========================================================
+           INIT
+        ========================================================== */
+        function initDashboard() {
+            var months = DB.scorecards.months || [];
+            if (!months.length) return;
+
+            var sel = document.getElementById('monthSelector');
+            months.forEach(function (m) {
+                var opt = document.createElement('option');
+                opt.value = m.key;
+                opt.textContent = m.label;
+                sel.appendChild(opt);
+            });
+
+            currentMonthKey = months[months.length - 1].key;
+            sel.value = currentMonthKey;
+
+            Plotly.newPlot('modality_status', [], {}, PLOT_CFG);
+            Plotly.newPlot('tat_vs_target', [], {}, PLOT_CFG);
+
+            buildModalityCards();
+            applyMonth(currentMonthKey);
+
+            sel.addEventListener('change', function (e) { applyMonth(e.target.value); });
+
+            document.getElementById('applyDateFilter').addEventListener('click', function () {
+                var start = document.getElementById('startDate').value || null;
+                var end = document.getElementById('endDate').value || null;
+                if (!start || !end) return;
+                if (start > end) { var t = start; start = end; end = t; }
+                currentDateFilter.start = start;
+                currentDateFilter.end = end;
+                document.getElementById('startDate').value = start;
+                document.getElementById('endDate').value = end;
+                applyMonth(currentMonthKey);
+            });
+
+            document.getElementById('clearDateFilter').addEventListener('click', function () {
+                currentDateFilter = { start: null, end: null };
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                applyMonth(currentMonthKey);
+            });
+
+        }
+
+        /* ==========================================================
+           MASTER RENDER
+        ========================================================== */
+        function applyMonth(key) {
+            currentMonthKey = key;
+
+            var sc = monthData(DB.scorecards, key);
+            if (sc) {
+                document.getElementById('dashboardTitle').textContent =
+                    sc.label + ' — TAT & Token Workflow Report';
+                document.getElementById('scorecards-summary').textContent =
+                    'Monthly intake: ' + sc.totalTokens + ' tokens · ' +
+                    'Completion rate: ' + sc.completionRate.toFixed(1) + '% · ' +
+                    'Completed: ' + sc.completedTokens + ' · ' +
+                    'Pending: ' + sc.pendingTokens + ' · ' +
+                    'No-show: ' + sc.noShowTokens;
+            }
+
+            renderScorecards(key);
+            renderModalityStatus(key);
+            renderTatVsTarget(key);
+
+            MODALITIES.forEach(function (mod) {
+                document.getElementById('insight-' + mod.key).innerHTML = generateInsight(mod.key, key);
+                renderTrend(mod.key, key);
+                renderDistDonut(mod.key, key);
+                renderSvcBreakdown(mod.key, key);
+                renderBillBreakdown(mod.key, key);
+                updateDistTable(mod.key, key);
+                updateSvcTable(mod.key, key);
+                updateBillTable(mod.key, key);
+            });
+        }
+
+        /* ==========================================================
+           SCORECARDS — HTML stat cards (no Plotly, no white space)
+        ========================================================== */
+        function renderScorecards(key) {
+            var sc = monthData(DB.scorecards, key);
+            if (!sc) return;
+            var items = [
+                { label: 'Total Tokens', value: sc.totalTokens, color: '#0b3d91' },
+                { label: 'Completed', value: sc.completedTokens, color: '#1a9850' },
+                { label: 'E-Complete', value: sc.eCompleteTokens, color: '#2166ac' },
+                { label: 'Completion Rate', value: sc.completionRate.toFixed(1) + '%', color: '#1a9850' },
+                { label: 'Pending', value: sc.pendingTokens, color: '#c05621' },
+                { label: 'Serving', value: sc.servingTokens, color: '#0d7377' },
+                { label: 'No Show', value: sc.noShowTokens, color: '#d73027' },
+                { label: 'Standby', value: sc.standbyTokens, color: '#7b2d8b' },
+            ];
+            var container = document.getElementById('scorecards');
+            container.innerHTML = items.map(function (item) {
+                return '<div class="sc-item">' +
+                    '<span class="sc-label">' + item.label + '</span>' +
+                    '<span class="sc-value" style="color:' + item.color + '">' + item.value + '</span>' +
+                    '</div>';
+            }).join('');
+        }
+
+        /* ==========================================================
+           MODALITY STATUS
+        ========================================================== */
+        function renderModalityStatus(key) {
+            var ms = monthData(DB.modalityStatus, key);
+            if (!ms || !ms.modalities.length) return;
+            var cats = ms.modalities.map(function (m) { return m.modality; });
+            var comp = ms.modalities.map(function (m) { return m.completed; });
+            var nonc = ms.modalities.map(function (m) { return m.nonCompleted; });
+            Plotly.react('modality_status', [
+                {
+                    name: 'Completed', x: cats, y: comp, type: 'bar',
+                    marker: { color: '#1a9850' },
+                    text: comp.map(String), textposition: 'outside', textfont: { size: 11 }
+                },
+                {
+                    name: 'Not Completed', x: cats, y: nonc, type: 'bar',
+                    marker: { color: '#d73027' },
+                    text: nonc.map(String), textposition: 'outside', textfont: { size: 11 }
+                },
+            ], layout({
+                barmode: 'group', height: 290,
+                margin: { l: 48, r: 16, t: 16, b: 60 },
+                xaxis: { title: 'Modality' },
+                yaxis: { title: 'Tokens', range: yPadded([comp, nonc]) },
+                legend: { orientation: 'h', y: -0.28 },
+            }), PLOT_CFG);
+        }
+
+        /* ==========================================================
+           TAT VS TARGET
+        ========================================================== */
+        function renderTatVsTarget(key) {
+            var tv = monthData(DB.tatVsTarget, key);
+            if (!tv || !tv.modalities.length) return;
+            var cats = tv.modalities.map(function (m) { return m.modality; });
+            var actual = tv.modalities.map(function (m) { return m.actualMinutes; });
+            var target = tv.modalities.map(function (m) { return m.targetMinutes; });
+            var actLbl = tv.modalities.map(function (m) { return m.actualHHMM; });
+            var tgtLbl = tv.modalities.map(function (m) { return m.targetHHMM; });
+            Plotly.react('tat_vs_target', [
+                {
+                    name: 'Actual TAT', x: cats, y: actual, type: 'bar',
+                    marker: { color: '#4393c3' },
+                    text: actLbl, textposition: 'outside', textfont: { size: 11 }
+                },
+                {
+                    name: 'Target TAT', x: cats, y: target, type: 'bar',
+                    marker: { color: '#f4a100' },
+                    text: tgtLbl, textposition: 'outside', textfont: { size: 11 }
+                },
+            ], layout({
+                barmode: 'group', height: 290,
+                margin: { l: 48, r: 16, t: 16, b: 60 },
+                xaxis: { title: 'Modality' },
+                yaxis: { title: 'Minutes', range: yPadded([actual, target]) },
+                legend: { orientation: 'h', y: -0.28 },
+            }), PLOT_CFG);
+        }
+
+        /* ==========================================================
+           DAILY TREND
+        ========================================================== */
+        function renderTrend(modKey, monthKey) {
+            var dt = monthData(DB.dailyTrends, monthKey);
+            if (!dt || !dt.modalities) return;
+            var mod = MODALITIES.find(function (m) { return m.key === modKey; });
+            var pts = filterByDate(dt.modalities[modKey] || []);
+            var dates = pts.map(function (p) { return p.date; });
+            var actual = pts.map(function (p) { return p.actualMin; });
+            var target = pts.map(function (p) { return p.targetMin; });
+            var counts = pts.map(function (p) { return p.completed; });
+
+            Plotly.react('trend-' + modKey, [
+                {
+                    name: 'Tokens', x: dates, y: counts, type: 'bar', yaxis: 'y2',
+                    marker: { color: (mod ? mod.color : '#4393c3') + '30' },
+                    text: counts.map(String), textposition: 'outside', textfont: { size: 9 },
+                    hovertemplate: '%{x}: %{y} tokens<extra></extra>'
+                },
+                {
+                    name: 'Actual TAT', x: dates, y: actual, type: 'scatter', mode: 'lines+markers',
+                    line: { color: '#d73027', width: 2.5 }, marker: { size: 5 },
+                    text: pts.map(function (p) { return p.actualHHMM; }),
+                    hovertemplate: '%{x} — Actual: %{text}<extra></extra>'
+                },
+                {
+                    name: 'Target TAT', x: dates, y: target, type: 'scatter', mode: 'lines',
+                    line: { color: '#1a9850', width: 2, dash: 'dash' },
+                    text: pts.map(function (p) { return p.targetHHMM; }),
+                    hovertemplate: '%{x} — Target: %{text}<extra></extra>'
+                },
+            ], layout({
+                height: 290,
+                margin: { l: 50, r: 55, t: 16, b: 64 },
+                xaxis: { tickangle: -40, tickfont: { size: 10 } },
+                yaxis: { title: 'Minutes', side: 'left' },
+                yaxis2: {
+                    title: 'Tokens', side: 'right', overlaying: 'y', showgrid: false,
+                    range: yPadded([counts])
+                },
+                legend: { orientation: 'h', y: -0.32, font: { size: 11 } },
+            }), PLOT_CFG);
+        }
+
+        /* ==========================================================
+           DISTRIBUTION DONUT
+        ========================================================== */
+        function renderDistDonut(modKey, monthKey) {
+            var td = monthData(DB.tatDist, monthKey);
+            if (!td) return;
+            var mDist = (td.modalities || []).find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+            if (!mDist) return;
+            Plotly.react('dist-' + modKey, [{
+                type: 'pie', hole: 0.52,
+                labels: ['Billing', 'Service', 'Dispatch'],
+                values: [mDist.billingMinutes || 0, mDist.serviceMinutes || 0, mDist.dispatchMinutes || 0],
+                marker: { colors: ['#4393c3', '#1a9850', '#f4a100'] },
+                text: [mDist.billingHHMM, mDist.serviceHHMM, mDist.dispatchHHMM],
+                textinfo: 'label+percent', textfont: { size: 11 },
+                hovertemplate: '%{label}: %{text}<br>%{percent}<extra></extra>',
+            }], {
+                height: 200,
+                margin: { l: 8, r: 8, t: 8, b: 8 },
+                paper_bgcolor: 'transparent',
+                showlegend: false,
+                font: { family: "'DM Sans', sans-serif" },
+            }, PLOT_CFG);
+        }
+
+        /* ==========================================================
+           SERVICE STACKED BAR
+        ========================================================== */
+        function renderSvcBreakdown(modKey, monthKey) {
+            var pb = monthData(DB.processBD, monthKey);
+            if (!pb) return;
+            var mPB = (pb.modalities || []).find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+            if (!mPB) return;
+            var pts = filterByDate(mPB.points || []);
+            var dates = pts.map(function (p) { return p.date; });
+            var wait = pts.map(function (p) { return p.serviceBreakdown.waitMinutes || 0; });
+            var svc = pts.map(function (p) { return p.serviceBreakdown.serviceMinutes || 0; });
+            var hold = pts.map(function (p) { return p.serviceBreakdown.holdMinutes || 0; });
+            Plotly.react('svc-' + modKey, [
+                {
+                    name: 'Wait', x: dates, y: wait, type: 'bar', marker: { color: '#4393c3' },
+                    text: wait.map(function (v) { return v > 0 ? toHHMM(v) : ''; }), textposition: 'inside', textfont: { size: 9 }
+                },
+                {
+                    name: 'Service', x: dates, y: svc, type: 'bar', marker: { color: '#1a9850' },
+                    text: svc.map(function (v) { return v > 0 ? toHHMM(v) : ''; }), textposition: 'inside', textfont: { size: 9 }
+                },
+                {
+                    name: 'Hold', x: dates, y: hold, type: 'bar', marker: { color: '#f4a100' },
+                    text: hold.map(function (v) { return v > 0 ? toHHMM(v) : ''; }), textposition: 'inside', textfont: { size: 9 }
+                },
+            ], layout({
+                barmode: 'stack', height: 220,
+                margin: { l: 46, r: 10, t: 8, b: 64 },
+                xaxis: { tickangle: -40, tickfont: { size: 9 } },
+                yaxis: { title: 'Min' },
+                legend: { orientation: 'h', y: -0.38, font: { size: 10 } },
+            }), PLOT_CFG);
+        }
+
+        /* ==========================================================
+           BILLING STACKED BAR
+        ========================================================== */
+        function renderBillBreakdown(modKey, monthKey) {
+            var pb = monthData(DB.processBD, monthKey);
+            if (!pb) return;
+            var mPB = (pb.modalities || []).find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+            if (!mPB) return;
+            var pts = filterByDate(mPB.points || []);
+            var dates = pts.map(function (p) { return p.date; });
+            var wait = pts.map(function (p) { return p.billingBreakdown.waitMinutes || 0; });
+            var svc = pts.map(function (p) { return p.billingBreakdown.serviceMinutes || 0; });
+            var hold = pts.map(function (p) { return p.billingBreakdown.holdMinutes || 0; });
+            Plotly.react('bill-' + modKey, [
+                {
+                    name: 'Wait', x: dates, y: wait, type: 'bar', marker: { color: '#2166ac' },
+                    text: wait.map(function (v) { return v > 0 ? toHHMM(v) : ''; }), textposition: 'inside', textfont: { size: 9 }
+                },
+                {
+                    name: 'Service', x: dates, y: svc, type: 'bar', marker: { color: '#4dac26' },
+                    text: svc.map(function (v) { return v > 0 ? toHHMM(v) : ''; }), textposition: 'inside', textfont: { size: 9 }
+                },
+                {
+                    name: 'Hold', x: dates, y: hold, type: 'bar', marker: { color: '#d01c8b' },
+                    text: hold.map(function (v) { return v > 0 ? toHHMM(v) : ''; }), textposition: 'inside', textfont: { size: 9 }
+                },
+            ], layout({
+                barmode: 'stack', height: 220,
+                margin: { l: 46, r: 10, t: 8, b: 64 },
+                xaxis: { tickangle: -40, tickfont: { size: 9 } },
+                yaxis: { title: 'Min' },
+                legend: { orientation: 'h', y: -0.38, font: { size: 10 } },
+            }), PLOT_CFG);
+        }
+
+        /* ==========================================================
+           TABLES
+        ========================================================== */
+        function rows(data) {
+            return data.map(function (r) {
+                return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>';
+            }).join('');
+        }
+
+        function updateDistTable(modKey, monthKey) {
+            var td = monthData(DB.tatDist, monthKey);
+            if (!td) return;
+            var mDist = (td.modalities || []).find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+            if (!mDist) return;
+            var tb = document.querySelector('#dist-tbl-' + modKey + ' tbody');
+            if (tb) tb.innerHTML = rows([
+                ['Billing', mDist.billingHHMM || '--', (mDist.billingPct != null ? mDist.billingPct + '%' : '--')],
+                ['Service', mDist.serviceHHMM || '--', (mDist.servicePct != null ? mDist.servicePct + '%' : '--')],
+                ['Dispatch', mDist.dispatchHHMM || '--', (mDist.dispatchPct != null ? mDist.dispatchPct + '%' : '--')],
+            ]);
+        }
+
+        function updateSvcTable(modKey, monthKey) {
+            var pb = monthData(DB.processBD, monthKey);
+            if (!pb) return;
+            var mPB = (pb.modalities || []).find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+            if (!mPB || !mPB.points.length) return;
+            var pts = mPB.points;
+            var avgW = safeAvg(pts.map(function (p) { return p.serviceBreakdown.waitMinutes; }));
+            var avgS = safeAvg(pts.map(function (p) { return p.serviceBreakdown.serviceMinutes; }));
+            var avgH = safeAvg(pts.map(function (p) { return p.serviceBreakdown.holdMinutes; }));
+            var total = avgW + avgS + avgH;
+            var tb = document.querySelector('#svc-tbl-' + modKey + ' tbody');
+            if (tb) tb.innerHTML = rows([
+                ['Wait', toHHMM(avgW), safePct(avgW, total)],
+                ['Service', toHHMM(avgS), safePct(avgS, total)],
+                ['Hold', toHHMM(avgH), safePct(avgH, total)],
+            ]);
+        }
+
+        function updateBillTable(modKey, monthKey) {
+            var pb = monthData(DB.processBD, monthKey);
+            if (!pb) return;
+            var mPB = (pb.modalities || []).find(function (m) { return m.modality === KEY_TO_LABEL[modKey]; });
+            if (!mPB || !mPB.points.length) return;
+            var pts = mPB.points;
+            var avgW = safeAvg(pts.map(function (p) { return p.billingBreakdown.waitMinutes; }));
+            var avgS = safeAvg(pts.map(function (p) { return p.billingBreakdown.serviceMinutes; }));
+            var avgH = safeAvg(pts.map(function (p) { return p.billingBreakdown.holdMinutes; }));
+            var total = avgW + avgS + avgH;
+            var tb = document.querySelector('#bill-tbl-' + modKey + ' tbody');
+            if (tb) tb.innerHTML = rows([
+                ['Wait', toHHMM(avgW), safePct(avgW, total)],
+                ['Service', toHHMM(avgS), safePct(avgS, total)],
+                ['Hold', toHHMM(avgH), safePct(avgH, total)],
+            ]);
+        }
+    </script>
+</body>
+
+</html>
