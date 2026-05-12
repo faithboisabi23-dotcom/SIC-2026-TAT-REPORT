@@ -63,14 +63,26 @@
     {
       "key": "apr",
       "label": "April 2026",
-      "totalTokens": 2165,
-      "completedTokens": 1317,
-      "eCompleteTokens": 163,
-      "pendingTokens": 333,
-      "servingTokens": 16,
+      "totalTokens": 2243,
+      "completedTokens": 1364,
+      "eCompleteTokens": 169,
+      "pendingTokens": 340,
+      "servingTokens": 18,
       "noShowTokens": 57,
-      "standbyTokens": 279,
+      "standbyTokens": 295,
       "completionRate": 60.8
+    },
+    {
+      "key": "may",
+      "label": "May 2026",
+      "totalTokens": 648,
+      "completedTokens": 366,
+      "eCompleteTokens": 49,
+      "pendingTokens": 133,
+      "servingTokens": 3,
+      "noShowTokens": 16,
+      "standbyTokens": 81,
+      "completionRate": 56.5
     }
   ]
 }
