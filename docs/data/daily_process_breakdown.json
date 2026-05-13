@@ -10311,6 +10311,23 @@
                 "serviceMinutes": 9.48,
                 "holdMinutes": 27.35
               }
+            },
+            {
+              "date": "2026-05-12",
+              "tokens": 3,
+              "billingMinutes": 20.58,
+              "serviceMinutes": 0.0,
+              "dispatchMinutes": 302.33,
+              "serviceBreakdown": {
+                "waitMinutes": 0.0,
+                "serviceMinutes": 0.0,
+                "holdMinutes": 0.0
+              },
+              "billingBreakdown": {
+                "waitMinutes": 15.08,
+                "serviceMinutes": 5.5,
+                "holdMinutes": 0.0
+              }
             }
           ]
         },
@@ -10469,6 +10486,23 @@
                 "serviceMinutes": 5.62,
                 "holdMinutes": 12.06
               }
+            },
+            {
+              "date": "2026-05-12",
+              "tokens": 15,
+              "billingMinutes": 47.12,
+              "serviceMinutes": 151.43,
+              "dispatchMinutes": 162.28,
+              "serviceBreakdown": {
+                "waitMinutes": 118.6,
+                "serviceMinutes": 24.75,
+                "holdMinutes": 8.08
+              },
+              "billingBreakdown": {
+                "waitMinutes": 11.76,
+                "serviceMinutes": 6.45,
+                "holdMinutes": 28.91
+              }
             }
           ]
         },
@@ -10512,7 +10546,7 @@
             {
               "date": "2026-05-05",
               "tokens": 16,
-              "billingMinutes": 24.17,
+              "billingMinutes": 22.85,
               "serviceMinutes": 61.01,
               "dispatchMinutes": 57.05,
               "serviceBreakdown": {
@@ -10521,7 +10555,7 @@
                 "holdMinutes": 3.79
               },
               "billingBreakdown": {
-                "waitMinutes": 5.3,
+                "waitMinutes": 5.31,
                 "serviceMinutes": 7.06,
                 "holdMinutes": 10.49
               }
@@ -10609,6 +10643,23 @@
                 "waitMinutes": 6.98,
                 "serviceMinutes": 4.14,
                 "holdMinutes": 0.0
+              }
+            },
+            {
+              "date": "2026-05-12",
+              "tokens": 15,
+              "billingMinutes": 16.91,
+              "serviceMinutes": 69.13,
+              "dispatchMinutes": 40.99,
+              "serviceBreakdown": {
+                "waitMinutes": 32.51,
+                "serviceMinutes": 24.49,
+                "holdMinutes": 12.13
+              },
+              "billingBreakdown": {
+                "waitMinutes": 8.12,
+                "serviceMinutes": 5.68,
+                "holdMinutes": 1.59
               }
             }
           ]
@@ -10767,6 +10818,23 @@
                 "waitMinutes": 9.17,
                 "serviceMinutes": 3.63,
                 "holdMinutes": 2.32
+              }
+            },
+            {
+              "date": "2026-05-12",
+              "tokens": 21,
+              "billingMinutes": 19.66,
+              "serviceMinutes": 70.36,
+              "dispatchMinutes": 63.09,
+              "serviceBreakdown": {
+                "waitMinutes": 66.65,
+                "serviceMinutes": 3.71,
+                "holdMinutes": 0.0
+              },
+              "billingBreakdown": {
+                "waitMinutes": 8.31,
+                "serviceMinutes": 3.1,
+                "holdMinutes": 8.25
               }
             }
           ]
