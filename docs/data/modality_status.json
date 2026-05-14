@@ -622,14 +622,15 @@
         },
         {
           "modality": "CT",
-          "completed": 25,
-          "nonCompleted": 99,
+          "completed": 30,
+          "nonCompleted": 111,
           "statusBreakdown": {
-            "complete": 25,
-            "e_complete": 7,
+            "complete": 30,
+            "e_complete": 10,
             "noshow": 4,
-            "pending": 61,
-            "standby": 27
+            "pending": 68,
+            "serving": 1,
+            "standby": 28
           }
         },
         {
@@ -652,39 +653,39 @@
         },
         {
           "modality": "MRI",
-          "completed": 109,
-          "nonCompleted": 139,
+          "completed": 123,
+          "nonCompleted": 160,
           "statusBreakdown": {
-            "complete": 109,
-            "e_complete": 30,
-            "noshow": 5,
-            "pending": 70,
-            "standby": 34
+            "complete": 123,
+            "e_complete": 38,
+            "noshow": 6,
+            "pending": 78,
+            "standby": 38
           }
         },
         {
           "modality": "Ultrasound",
-          "completed": 155,
-          "nonCompleted": 37,
+          "completed": 169,
+          "nonCompleted": 42,
           "statusBreakdown": {
-            "complete": 155,
-            "e_complete": 9,
+            "complete": 169,
+            "e_complete": 12,
             "noshow": 4,
-            "pending": 12,
-            "standby": 12
+            "pending": 13,
+            "standby": 13
           }
         },
         {
           "modality": "XRAY",
-          "completed": 130,
-          "nonCompleted": 36,
+          "completed": 140,
+          "nonCompleted": 44,
           "statusBreakdown": {
-            "complete": 130,
-            "e_complete": 9,
-            "noshow": 7,
-            "pending": 3,
+            "complete": 140,
+            "e_complete": 10,
+            "noshow": 8,
+            "pending": 7,
             "serving": 3,
-            "standby": 14
+            "standby": 16
           }
         }
       ]
